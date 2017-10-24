@@ -1,13 +1,13 @@
 #[macro_use]
 extern crate serde_derive;
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct Symbol(pub char);
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct State(pub String);
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct StateChange {
     pub state: State,
     pub symbol: Symbol,
@@ -55,6 +55,17 @@ impl DeterministicFiniteAutomaton {
     pub fn correct(&self) -> bool {
         if !(self.state_transitions.len() == self.alphabet.len() * self.states.len()) {
             return false
+        }
+        for state_transition in self.state_transitions.iter() {
+            if !self.states.contains(&state_transition.state) {
+                return false
+            }
+            if !self.states.contains(&state_transition.new_state) {
+                return false
+            }
+            if !self.alphabet.contains(&state_transition.symbol) {
+                return false
+            }
         }
         true
     }
